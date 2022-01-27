@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".FootCountActivity">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="1.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.0">
+
+        <TextView
+            android:id="@+id/counter"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="0 pas"
+            android:textColorLink="@android:color/darker_gray"
+            android:textSize="30sp" />
+
+
+        <TextView
+            android:id="@+id/counter_metter"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="0 m"
+            android:textColorLink="@android:color/darker_gray"
+            android:textSize="30sp" />
+
+
+        <TextView
+            android:id="@+id/counter_metter_per_second"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="0 m/s"
+            android:textColorLink="@android:color/darker_gray"
+            android:textSize="30sp" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical">
+
+            <com.google.android.gms.maps.MapView
+                android:id="@+id/mapView2"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_margin="8dp"
+                android:layout_weight="1" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <Button
+                    android:id="@+id/startButton"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="8dp"
+                    android:layout_weight="1"
+                    android:onClick="clickStartButton"
+                    android:text="@string/button_count_start"
+                    android:textSize="12sp" />
+
+                <Button
+                    android:id="@+id/restart"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="8dp"
+                    android:layout_weight="1"
+                    android:onClick="clickRestartButton"
+                    android:text="@string/button_count_reset"
+                    android:textSize="12sp" />
+
+                <Button
+                    android:id="@+id/stopButton"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="8dp"
+                    android:layout_weight="1"
+                    android:onClick="clickStopButton"
+                    android:text="@string/button_count_stop"
+                    android:textSize="12sp" />
+
+            </LinearLayout>
+
+        </LinearLayout>
+
+    </LinearLayout>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

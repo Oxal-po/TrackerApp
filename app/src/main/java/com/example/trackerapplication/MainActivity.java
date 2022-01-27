@@ -1,94 +1,60 @@
 package com.example.trackerapplication;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 
-import android.hardware.Sensor;
-import android.hardware.SensorEvent;
-import android.hardware.SensorEventListener;
-import android.hardware.SensorManager;
+import android.Manifest;
+import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
-import android.widget.TextView;
 
-import com.example.trackerapplication.entity.StepCount;
+import com.example.trackerapplication.utils.context.ContextUtils;
+import com.example.trackerapplication.utils.map.LocationUtils;
 
-import java.util.Date;
-
-public class MainActivity extends AppCompatActivity implements SensorEventListener {
-
-    private SensorManager sensorManager;
-    private Sensor sensor;
-    private TextView stepTv;
-    private TextView metterTv, metterPerSecondTv;
-    private StepCount stepCount;
-
-
+public class MainActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
-        if (stepCount == null) {
-            stepCount = new StepCount();
-        }
-
         setContentView(R.layout.activity_main);
-        stepTv = findViewById(R.id.counter);
-        metterTv = findViewById(R.id.counter_metter);
-        metterPerSecondTv = findViewById(R.id.counter_metter_per_second);
+        new ContextUtils(this);
 
-        sensorManager = (SensorManager) getSystemService(SENSOR_SERVICE);
-        sensor = sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
-
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.RECEIVE_SMS) != PackageManager.PERMISSION_GRANTED ||
+                ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED ||
+                ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_BACKGROUND_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            askPerm();
+        }
+        new LocationUtils(this);
     }
 
-    public void onSensorChanged(SensorEvent sensorEvent) {
-        stepCount.addStep(sensorEvent.values);
-        stepTv.setText(stepCount.getStep() + " pas");
-        metterTv.setText(stepCount.getMetter() + " m");
-        metterPerSecondTv.setText(stepCount.getMetterPerSecond() + " m/s");
+    public void askPerm() {
+        ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.READ_EXTERNAL_STORAGE,
+                Manifest.permission.READ_CONTACTS, Manifest.permission.READ_SMS, Manifest.permission.RECEIVE_SMS,
+                Manifest.permission.SEND_SMS, Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION,
+                Manifest.permission.INTERNET, Manifest.permission.ACCESS_NOTIFICATION_POLICY, Manifest.permission.ACCESS_BACKGROUND_LOCATION}, 1);
     }
 
-    public void onAccuracyChanged(Sensor sensor, int accuracy) {
-
+    public void count(View view) {
+        Intent intent = new Intent(this, FootCountActivity.class);
+        startActivity(intent);
     }
 
-    protected void onResume() {
-        super.onResume();
-        //sensorManager.registerListener(this,sensor,SensorManager.SENSOR_DELAY_GAME);
-    }
-
-    public void clickStartButton(View view) {
-        stepCount.start();
-        sensorManager.registerListener(this, sensor, SensorManager.SENSOR_DELAY_GAME);
-    }
-
-    public void clickRestartButton(View view) {
-        stepTv.setText("0 pas");
-        metterTv.setText("0 m");
-        metterPerSecondTv.setText("0 m/s");
-        stepCount = new StepCount();
-        stepCount.start();
-    }
-
-    public void clickStopButton(View view) {
-        stepCount.stop();
-        sensorManager.unregisterListener(this);
+    public void testSMS(View view) {
+        Intent intent = new Intent(this, TrackingActivity.class);
+        startActivity(intent);
     }
 
     @Override
-    public void onRestoreInstanceState(Bundle savedInstanceState) {
-        stepCount = new StepCount(savedInstanceState, sensorManager, this, sensor);
-
-        stepTv.setText(stepCount.getStep() + " pas");
-        metterTv.setText(stepCount.getMetter() + " m");
-        metterPerSecondTv.setText(stepCount.getMetterPerSecond() + " m/s");
-    }
-
-    // invoked when the activity may be temporarily destroyed, save the instance state here
-    @Override
-    public void onSaveInstanceState(Bundle outState) {
-        super.onSaveInstanceState(outState);
-        stepCount.save(outState);
+    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        for (int i = 0; i < permissions.length; i++) {
+            if (requestCode == 1 && grantResults.length > 0 && grantResults[i] == PackageManager.PERMISSION_GRANTED) {
+                Log.v("PALU", "Permission: " + permissions[i] + " was " + grantResults[i]);
+            }
+        }
     }
 }

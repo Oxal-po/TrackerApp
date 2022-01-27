@@ -4,6 +4,9 @@ import android.hardware.Sensor;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
 import android.os.Bundle;
+import android.util.Log;
+
+import com.example.trackerapplication.utils.StepCountManager;
 
 import java.util.Date;
 
@@ -13,9 +16,22 @@ public class StepCount {
     private float d0, d = 0f;
     public static final float AVG_LONG_STEP = 0.6076f;
     private int step = 0;
-    private long startTime;
+    private long startTime, stopTime;
 
     public StepCount() {
+        this(true);
+    }
+
+    public StepCount(boolean bundleCheck) {
+        if (bundleCheck) {
+            StepCountManager.getBundle().ifPresent(bundle -> {
+                d0 = bundle.getFloat("D0");
+                step = bundle.getInt("STEP");
+                startTime = bundle.getLong("TIME");
+                stopTime = bundle.getLong("STOP");
+            });
+            StepCountManager.update(this);
+        }
     }
 
     public StepCount(Bundle bundle, SensorManager sensorManager, SensorEventListener sensorEventListener, Sensor sensor) {
@@ -32,11 +48,19 @@ public class StepCount {
     }
 
     public void start() {
-        startTime = new Date().getTime();
+        if (stopTime != 0) {
+            startTime = new Date().getTime() - Math.abs(stopTime - startTime);
+        } else if(startTime == 0) {
+            startTime = new Date().getTime();
+        }
+        stopTime = 0;
         setRun(true);
     }
 
     public void stop() {
+        if (stopTime == 0 && stopTime != 0) {
+            stopTime = new Date().getTime();
+        }
         setRun(false);
     }
 
@@ -114,7 +138,12 @@ public class StepCount {
     }
 
     public double getMetterPerSecond() {
-        long time = new Date().getTime() - startTime;
+        long time;
+        if (stopTime == 0) {
+            time = new Date().getTime() - startTime;
+        } else {
+            time = stopTime - startTime;
+        }
         return getMetter() / getSeconde(time);
     }
 
@@ -122,14 +151,27 @@ public class StepCount {
         return (int) (time/1000);
     }
 
-    public int getSeconde() {
-        return getSeconde(new Date().getTime() - startTime);
-    }
-
     public void save(Bundle bundle) {
+        StepCountManager.update(this);
         bundle.putBoolean("IS_RUN", run);
         bundle.putInt("STEP", step);
         bundle.putLong("TIME", startTime);
+        bundle.putLong("STOP", stopTime);
         bundle.putFloat("D0", d0);
+    }
+
+    public Bundle toBundle() {
+        Bundle bundle = new Bundle();
+        bundle.putBoolean("IS_RUN", run);
+        bundle.putInt("STEP", step);
+        bundle.putLong("TIME", startTime);
+        if (stopTime == 0) {
+            bundle.putLong("STOP", new Date().getTime());
+        } else {
+            bundle.putLong("STOP", stopTime);
+        }
+        bundle.putFloat("D0", d0);
+        Log.d("PALU BUNDLE", bundle.toString());
+        return bundle;
     }
 }

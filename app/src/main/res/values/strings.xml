@@ -1,3 +1,15 @@
 <resources>
     <string name="app_name">TrackerApplication</string>
+    <string name="button_main_to_count">Compteur de pas</string>
+    <string name="button_main_to_tracker">Tracker quelqu\'un</string>
+    <string name="button_count_start">Start</string>
+    <string name="button_count_reset">Reset</string>
+    <string name="button_count_stop">Pause</string>
+    <string name="button_count_track">Mettre à jour la map</string>
+    <string name="button_tracking_tracking">Tracker ce numéro</string>
+    <string name="text_tracking_numero">Insérez le numéro</string>
+    <string name="text_count_tracking">Envoyer la position au tracker</string>
+    <string name="toast_tracking_error_number">Le numéro n\'est pas valide</string>
+    <string name="text_tracking_current_track">vous tracker </string>
+    <string name="button_tracking_cancel">Stop tracking</string>
 </resources>
